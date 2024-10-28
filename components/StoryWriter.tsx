@@ -10,6 +10,10 @@ function StoryWriter() {
 
   const [story, setStory] = useState<string>("")
   const [pages, setPages] = useState<number>()
+  const [progress, setProgress] = useState<string>("")
+  const [runStarted, setRunStarted] = useState<boolean>(false)
+  const [runFinished, setRunFinished] = useState<boolean | null>(null)
+  const [currentTool, setCurrentTool] = useState<string>("")
 
   return (
     <div className="flex flex-col container p-5">
@@ -38,8 +42,21 @@ function StoryWriter() {
         <section className="flex-1 pb-5 mt-5">
           <div className="flex flex-col-reverse w-full space-y-2 bg-gray-800 rounded-md text-gray-200 font-mono p-10 h-96 overflow-y-scroll">
             <div>
+              {runFinished === null && (
+                <>
+                  <p className="animate-pulse mr-5">I am waiting for you to generate a story ...</p>
+                  <br />
+                </>
+              )}
               <span className="mr-5">{">>"}</span>
+              {progress}
             </div>
+            {currentTool && (
+              <div className="py-10">
+                <span className="mr-5">{" --- [Current Tool] --- "}</span>
+                {currentTool}
+              </div>
+            )}
           </div>
         </section>
     </div>
