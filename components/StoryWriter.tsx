@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Textarea } from "./ui/textarea"
 import { pages } from "next/dist/build/templates/app-page";
 
+const storiesPath = 'pubic/stories'
+
 function StoryWriter() {
 
   const [story, setStory] = useState<string>("")
@@ -14,6 +16,54 @@ function StoryWriter() {
   const [runStarted, setRunStarted] = useState<boolean>(false)
   const [runFinished, setRunFinished] = useState<boolean | null>(null)
   const [currentTool, setCurrentTool] = useState<string>("")
+
+  async function handleStream(reader: ReadableStreamDefaultReader<Uint8Array>, decoder: TextDecoder) {
+    //manage stream coming from API
+    while(true){
+      const { done, value } = await reader.read()
+      if(done){
+        break;
+      }
+      const chunk = decoder.decode(value, { stream: true })
+
+      const eventData = chunk
+      .split("\n\n")
+      .filter((line) => line.startsWith("event: "))
+      .map((line) => line.replace(/^event: /, ""))
+
+      // eventData.forEach(())
+    }
+
+
+  }
+
+  async function runScript(){
+    setRunStarted(true);
+    setRunFinished(false);
+
+    const response = await fetch('/api/run-script', {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify({ story, pages, path: storiesPath})
+    })
+
+    if (response.ok && response.body){
+      //handle stream from API
+      console.log("Streaming started")
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      handleStream(reader, decoder)
+    }
+    else{
+      setRunFinished(true);
+      setRunStarted(false);
+      console.error("Failed to start streaming")
+    }
+  }
 
   return (
     <div className="flex flex-col container p-5">
@@ -35,7 +85,7 @@ function StoryWriter() {
                 ))}
               </SelectContent>
             </Select>
-            <Button disabled={!story || !pages} className="w-full " size="lg">
+            <Button disabled={!story || !pages || runStarted} onClick={runScript} className="w-full " size="lg">
               Generate Story
             </Button>
         </section>
@@ -55,6 +105,13 @@ function StoryWriter() {
               <div className="py-10">
                 <span className="mr-5">{" --- [Current Tool] --- "}</span>
                 {currentTool}
+              </div>
+            )}
+
+            {runStarted && (
+              <div>
+                <span className="mr-5 animate-in">{" --- [AI story teller has started] ---" }</span>
+                <br />
               </div>
             )}
           </div>
