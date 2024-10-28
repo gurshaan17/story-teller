@@ -5,6 +5,8 @@ import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea"
 import { pages } from "next/dist/build/templates/app-page";
+import { Frame } from "@gptscript-ai/gptscript";
+import renderEventMessage from "@/lib/renderEventMessage";
 
 const storiesPath = 'pubic/stories'
 
@@ -16,6 +18,7 @@ function StoryWriter() {
   const [runStarted, setRunStarted] = useState<boolean>(false)
   const [runFinished, setRunFinished] = useState<boolean | null>(null)
   const [currentTool, setCurrentTool] = useState<string>("")
+  const [events, setEvents] = useState<Frame[]>([])
 
   async function handleStream(reader: ReadableStreamDefaultReader<Uint8Array>, decoder: TextDecoder) {
     //manage stream coming from API
@@ -31,7 +34,27 @@ function StoryWriter() {
       .filter((line) => line.startsWith("event: "))
       .map((line) => line.replace(/^event: /, ""))
 
-      // eventData.forEach(())
+      eventData.forEach((data) => {
+        try{
+          const parsedData = JSON.parse(data);
+          if(parsedData.type === "callProgress"){
+            setProgress(parsedData.output[parsedData.output.length - 1].content)
+            setCurrentTool(parsedData.tool?.desciption || "")
+          }
+          else if(parsedData.type === "callStart"){
+            setCurrentTool(parsedData.tool?.desciption || "")
+          }
+          else if(parsedData.type === "runFinish"){
+            setRunFinished(true);
+            setRunStarted(false);
+          }
+          else {
+            setEvents((prevEvents: any) => [...prevEvents, parsedData])
+          }
+        } catch(err) {
+
+        }
+      })
     }
 
 
@@ -107,6 +130,16 @@ function StoryWriter() {
                 {currentTool}
               </div>
             )}
+
+            {/* render events */}
+            <div>
+              {events.map((event, index) => (
+                <div key={index}>
+                  <span className="mr-5">{">>"}</span>
+                  {renderEventMessage(event)}
+                </div>
+              ))}
+            </div>
 
             {runStarted && (
               <div>
