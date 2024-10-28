@@ -28,20 +28,23 @@ export async function POST(request: NextRequest){
                     controller.close();
                 } catch(err) {
                     controller.error(err);
-                    console.error("Error: ",err)
+                    console.error("Stream Error: ", err);
                 }
             },
         })
         return new Response (stream, {
             headers: {
                 "Content-Type": "application/json",
-                "Cache-control": "no-cache",
+                "Cache-Control": "no-cache",
                 "Connection": "keep-alive",
             }
         })
-    } catch(err) {
-        return new Response(JSON.stringify({ error: err}),{
-            status: 500
+    } catch(err: any) {
+        return new Response(JSON.stringify({ error: err.message }), {
+            status: 500,
+            headers: {
+                "Content-Type": "application/json"
+            }
         })
     }
 }
