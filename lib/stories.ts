@@ -1,6 +1,7 @@
 import { Page, Story } from "@/types/stories";
 import path from "path";
 import fs from "fs";
+import cleanTitle from "./cleanTitle";
 
 
 const storiesDirectory = path.join(process.cwd(), "public/stories") 
@@ -36,6 +37,11 @@ export function getAllStories(): Story[] {
                     pages.push(pageMap[pageNumber] as Page)
                 }
             })
+
+            return {
+                story: cleanTitle(storyFolder),
+                pages
+            }
             
         })
     })
