@@ -9,7 +9,7 @@ const storiesDirectory = path.join(process.cwd(), "public/stories")
 export function getAllStories(): Story[] {
     if(!fs.existsSync(storiesDirectory)) return [];
     const storyFolder = fs.readdirSync(storiesDirectory);
-    const stories: Story = storyFolder.map(storyFolder => {
+    const stories: Story[] = storyFolder.map(storyFolder => {
         const storyPath = path.join(storiesDirectory, storyFolder)
         const files = fs.readdirSync(storyPath)
 
@@ -37,13 +37,14 @@ export function getAllStories(): Story[] {
                     pages.push(pageMap[pageNumber] as Page)
                 }
             })
-
-            return {
-                story: cleanTitle(storyFolder),
-                pages
-            }
-            
         })
+        return {
+            story: cleanTitle(storyFolder),
+            pages
+        }
+    })
+    const storiesWithPages = stories.filter((story)=>{
+        story.pages.length > 0
     })
 }
 
