@@ -1,7 +1,7 @@
 'use client'
 
 import { Story as StoryType } from "@/types/stories";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Carousel, CarouselApi, CarouselContent, CarouselItem } from "./ui/carousel";
 import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
@@ -11,7 +11,18 @@ interface Props {
 }
 
 function Story({ story }:Props){
-const [api, setApi] = useState<CarouselApi>()
+    const [api, setApi] = useState<CarouselApi>()
+    const [current, setCurrent] = useState(0)
+    const [count, setCount] = useState(0)
+
+    useEffect(() => {
+        if(!api) return;
+        setCount(api.scrollSnapList().length)
+        setCurrent(api.selectedScrollSnap() + 1)
+        api.on("select", () => {
+            setCurrent(api.selectedScrollSnap() + 1)
+        })
+    },[api])
 
     return <div className="">
         <div className="px-2">
@@ -29,7 +40,11 @@ const [api, setApi] = useState<CarouselApi>()
                                         height = {500}
                                         className="w-80 h-80 xl:w-[500px] xl:h-[500px] rounded-3xl mx-auto float-right p-5 xl:order-last"
                                     />
+                                    <p className="font-semibold text-xl first-letter:text-3xl whitespace-pre-wrap">{page.txt}</p>
                                 </CardContent>
+                                <p className="text-center text-gray-500">
+                                    Page {current} of {count}
+                                </p>
                             </Card>
                         </CarouselItem>
                     ))}

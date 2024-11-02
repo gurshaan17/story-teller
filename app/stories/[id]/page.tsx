@@ -12,7 +12,7 @@ interface StoryPageProps {
 function StoryPage({ params: {id} }: StoryPageProps){
     const decodedId = decodeURIComponent(id);
     const story = getStory(decodedId);
-    if(!story){
+    if(story === undefined || story === null){
         return notFound();
     }
 
