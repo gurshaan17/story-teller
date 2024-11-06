@@ -1,12 +1,13 @@
 'use client'
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Textarea } from "./ui/textarea"
-import { pages } from "next/dist/build/templates/app-page";
 import { Frame } from "@gptscript-ai/gptscript";
 import renderEventMessage from "@/lib/renderEventMessage";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const storiesPath = 'pubic/stories'
 
@@ -19,7 +20,8 @@ function StoryWriter() {
   const [runFinished, setRunFinished] = useState<boolean | null>(null)
   const [currentTool, setCurrentTool] = useState<string>("")
   const [events, setEvents] = useState<Frame[]>([])
-
+  const router = useRouter()
+  
   async function handleStream(reader: ReadableStreamDefaultReader<Uint8Array>, decoder: TextDecoder) {
     //manage stream coming from API
     while(true){
@@ -56,9 +58,22 @@ function StoryWriter() {
         }
       })
     }
-
-
   }
+
+  useEffect(() => {
+    if (runFinished) {
+      toast.success("Story generated successfully!", {
+        action: (
+          <Button
+            onClick={() => {router.push('/stories')}}
+            className="bg-purple-500 ml-auto"
+          >
+            View Stories 
+          </Button>
+        )
+      })
+    }
+  },[runFinished, router])
 
   async function runScript(){
     setRunStarted(true);

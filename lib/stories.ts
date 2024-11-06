@@ -49,6 +49,7 @@ export function getAllStories(): Story[] {
     return storiesWithPages;
 }
 
-export const getStory = (story: string) => {
-
+export const getStory = (story: string): Story | undefined  => {
+    const stories = getAllStories();
+    return stories.find(s => s.story === story)
 }   

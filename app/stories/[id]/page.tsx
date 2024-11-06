@@ -7,27 +7,29 @@ interface StoryPageProps {
         id: string;
     }
 }
- 
-  
-function StoryPage({ params: {id} }: StoryPageProps){
+
+async function StoryPage({ params }: StoryPageProps) {
+    const { id } = await params
     const decodedId = decodeURIComponent(id);
-    const story = getStory(decodedId);
-    if(story === undefined || story === null){
+    const story = getStory(decodedId);  // Synchronous call
+
+    if (!story) {
         return notFound();
     }
-
-    return <div>
-        <Story story={story } />
-    </div>
+    
+    return (
+        <div>
+            <Story story={story} />
+        </div>
+    );
 }
 
 export default StoryPage;
 
 // generates static page for story before call useful for caching 
-export async function generateStaticParams(){
-    const stories = getAllStories();
-    const path = stories.map((story) => {
+export async function generateStaticParams() {
+    const stories = getAllStories(); 
+    return stories.map((story) => ({
         id: story.story
-    })
-    return path;
+    }));
 }
