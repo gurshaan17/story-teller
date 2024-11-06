@@ -10,14 +10,14 @@ interface StoryPageProps {
 
 // Fetches the decoded story ID
 async function getParams(params: StoryPageProps["params"]): Promise<string> {
-  const { id } = params;
-  return decodeURIComponent(id);
+  const decodedId = decodeURIComponent(params.id);
+  return decodedId;
 }
 
 async function StoryPage({ params }: StoryPageProps) {
   const storyId = await getParams(params);
   const story = await getStory(storyId);
-
+  
   if (!story) {
     return notFound();
   }
@@ -32,8 +32,8 @@ async function StoryPage({ params }: StoryPageProps) {
 export default StoryPage;
 
 export async function generateStaticParams() {
-  const stories = await getAllStories();
+  const stories = getAllStories();
   return stories.map((story) => ({
-    id: encodeURIComponent(story.story), // Ensure id is URI-encoded
+    id: story.story, // Use the correct identifier for each story
   }));
 }
