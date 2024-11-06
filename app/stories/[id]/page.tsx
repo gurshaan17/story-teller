@@ -5,20 +5,19 @@ import { notFound } from "next/navigation";
 interface StoryPageProps {
   params: {
     id: string;
-  }
+  };
 }
 
 // Fetches the decoded story ID
 async function getParams(params: StoryPageProps["params"]): Promise<string> {
-  const { id } = await params;
-  const decodedId = decodeURIComponent(id);
-  return decodedId;
+  const { id } = params;
+  return decodeURIComponent(id);
 }
 
 async function StoryPage({ params }: StoryPageProps) {
   const storyId = await getParams(params);
-  const story = getStory(storyId);
-  
+  const story = await getStory(storyId);
+
   if (!story) {
     return notFound();
   }
@@ -33,8 +32,8 @@ async function StoryPage({ params }: StoryPageProps) {
 export default StoryPage;
 
 export async function generateStaticParams() {
-  const stories = getAllStories();
+  const stories = await getAllStories();
   return stories.map((story) => ({
-    id: story.story, // Use the correct identifier for each story
+    id: encodeURIComponent(story.story), // Ensure id is URI-encoded
   }));
 }
