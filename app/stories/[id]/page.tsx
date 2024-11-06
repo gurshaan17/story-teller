@@ -19,10 +19,10 @@ function StoryPage({params: {id}}: StoryPageProps){
 
 export default StoryPage;
 
-export async function generateStaticParams() {
-  const stories = getAllStories();
-  const paths = stories.map((story) => ({
-    id: story.story
-  }))
-  return paths;
-}
+// export async function generateStaticParams() {
+//   const stories = getAllStories();
+//   const paths = stories.map((story) => ({
+//     id: story.story
+//   }))
+//   return paths;
+// }
