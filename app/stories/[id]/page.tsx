@@ -5,13 +5,13 @@ import { notFound } from "next/navigation";
 interface StoryPageProps {
     params: {
         id: string;
-    }
+    };
 }
 
-async function StoryPage({ params }: StoryPageProps) {
-    const { id } = await params
+function StoryPage({ params }: StoryPageProps) {
+    const { id } = params; // Remove `await`
     const decodedId = decodeURIComponent(id);
-    const story = getStory(decodedId);  // Synchronous call
+    const story = getStory(decodedId); // `getStory` is a synchronous function
 
     if (!story) {
         return notFound();
@@ -26,7 +26,7 @@ async function StoryPage({ params }: StoryPageProps) {
 
 export default StoryPage;
 
-// generates static page for story before call useful for caching 
+// Generates static pages for each story for caching
 export async function generateStaticParams() {
     const stories = getAllStories(); 
     return stories.map((story) => ({
