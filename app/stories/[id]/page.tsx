@@ -3,33 +3,31 @@ import { getAllStories, getStory } from "@/lib/stories";
 import { notFound } from "next/navigation";
 
 interface StoryPageProps {
-    params: {
-        id: string;
-    };
+  params: {
+    id: string;
+  }
 }
 
-function StoryPage({ params }: StoryPageProps) {
-    const { id } = params; // Remove `await`
-    const decodedId = decodeURIComponent(id);
-    const story = getStory(decodedId); // `getStory` is a synchronous function
+function StoryPage({ params: { id } }: StoryPageProps) {
+  const decodedId = decodeURIComponent(id);
+  const story = getStory(decodedId);
+  
+  if (!story) {
+    return notFound();
+  }
 
-    if (!story) {
-        return notFound();
-    }
-    
-    return (
-        <div>
-            <Story story={story} />
-        </div>
-    );
+  return (
+    <div>
+      <Story story={story} />
+    </div>
+  );
 }
 
 export default StoryPage;
 
-// Generates static pages for each story for caching
 export async function generateStaticParams() {
-    const stories = getAllStories(); 
-    return stories.map((story) => ({
-        id: story.story
-    }));
+  const stories = getAllStories();
+  return stories.map((story) => ({
+    id: story.story
+  }));
 }
