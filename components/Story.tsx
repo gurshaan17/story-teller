@@ -31,7 +31,7 @@ function Story({ story }:Props){
                     {story.pages.map((page, i) => (
                         <CarouselItem key={i}>
                             <Card className="p-5 md:p-10 border">
-                                <h2 className="text-center text-gray-500">{story.story}</h2>
+                                <h2 className="text-center text-gray-600 text-5xl pb-10">{story.story}</h2>
                                 <CardContent className="px-5 xl:flex">
                                     <Image
                                         src = {page.png}

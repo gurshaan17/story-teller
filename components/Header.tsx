@@ -5,7 +5,7 @@ import Link from "next/link";
 function Header(){
     return <header className="relative p-16 text-center">
         <Link href='/' prefetch={false}>
-            <h1 className="text-6xl font-black">StoryTeller AI</h1>
+            <h1 className="text-6xl font-black text-center">StoryTeller AI</h1>
             <div className="flex justify-center whitespace-nowrap space-x-5 text-3xl lg:text-5xl">
                 <h2>Bringing your stories </h2>
                 <div className="relative">
