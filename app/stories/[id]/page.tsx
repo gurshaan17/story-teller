@@ -3,9 +3,9 @@ import { getAllStories, getStory } from "@/lib/stories";
 import { notFound } from "next/navigation";
 
 interface StoryPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  }
+  }>;
 }
 
 // Fetches the decoded story ID
