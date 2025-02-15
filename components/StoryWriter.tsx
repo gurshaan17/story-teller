@@ -9,7 +9,8 @@ import renderEventMessage from "@/lib/renderEventMessage";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-const storiesPath = 'pubic/stories'
+import path from 'path';
+const storiesPath = path.join(process.cwd(), 'public/stories');
 
 function StoryWriter() {
 
